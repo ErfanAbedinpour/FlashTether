@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+:root {
+  --bg:         #080b0f;
+  --bg-card:    #0e1318;
+  --bg-card2:   #111820;
+  --border:     rgba(255,255,255,0.07);
+  --border-alt: rgba(0,255,136,0.2);
+  --accent:     #00ff88;
+  --accent-dim: rgba(0,255,136,0.12);
+  --accent-glow:rgba(0,255,136,0.35);
+  --text:       #e8f0ea;
+  --text-muted: #5a7060;
+  --text-mid:   #8aaa90;
+  --red:        #ff4466;
+  --yellow:     #ffc233;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 6px; }
+::-webkit-scrollbar-track  { background: var(--bg); }
+::-webkit-scrollbar-thumb  { background: #1e2e24; border-radius: 3px; }
+
+/* ── Glassmorphism card ────────────────────────────────────────── */
+.glass {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+}
+
+.glass-alt {
+  background: var(--bg-card2);
+  border: 1px solid var(--border);
+}
+
+/* ── Accent glow ───────────────────────────────────────────────── */
+.glow-accent {
+  box-shadow: 0 0 20px var(--accent-glow), 0 0 60px rgba(0,255,136,0.1);
+}
+
+/* ── Monospace numerics ────────────────────────────────────────── */
+.mono { font-family: "JetBrains Mono", "Fira Code", monospace; }
+
+/* ── Gradient text ─────────────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #00ff88 0%, #00ccff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Pulse dot ─────────────────────────────────────────────────── */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.85); }
+}
+.pulse-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse-dot 1.8s ease-in-out infinite;
+}
+
+/* ── Shimmer ───────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--bg-card) 25%,
+    var(--bg-card2) 50%,
+    var(--bg-card) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease infinite;
+}
+
+/* ── Spin ──────────────────────────────────────────────────────── */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 0.9s linear infinite; }
+
+/* ── Accordion ─────────────────────────────────────────────────── */
+details > summary { list-style: none; cursor: pointer; }
+details > summary::-webkit-details-marker { display: none; }
