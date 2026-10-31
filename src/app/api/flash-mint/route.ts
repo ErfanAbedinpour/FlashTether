@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { callFlashMint, validateTronAddress, verifyTrxPayment } from "@/lib/tron";
+import { callFlashMint, validateTronAddress } from "@/lib/tron";
 import { txStore } from "@/lib/tx-store";
 import { NILE_CONFIG, TOKEN } from "@/lib/constants";
 import { truncateAddress, formatDuration } from "@/lib/utils";
@@ -10,11 +10,9 @@ export async function POST(req: NextRequest) {
       targetAddress?: string;
       flashAmount?: number;
       durationSeconds?: number;
-      paymentTxHash?: string;
-      expectedAmountSun?: number;
     };
 
-    const { targetAddress, flashAmount, durationSeconds, paymentTxHash, expectedAmountSun } = body;
+    const { targetAddress, flashAmount, durationSeconds } = body;
 
     // ── Validate inputs ────────────────────────────────────────────────────
     if (!targetAddress || typeof targetAddress !== "string") {
@@ -26,12 +24,6 @@ export async function POST(req: NextRequest) {
     if (!durationSeconds || typeof durationSeconds !== "number" || durationSeconds <= 0) {
       return NextResponse.json({ success: false, error: "Invalid durationSeconds" }, { status: 400 });
     }
-    if (!paymentTxHash || typeof paymentTxHash !== "string") {
-      return NextResponse.json({ success: false, error: "Missing paymentTxHash" }, { status: 400 });
-    }
-    if (!expectedAmountSun || typeof expectedAmountSun !== "number") {
-      return NextResponse.json({ success: false, error: "Missing expectedAmountSun" }, { status: 400 });
-    }
 
     // ── Validate Tron address ──────────────────────────────────────────────
     try {
@@ -40,45 +32,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: "Invalid Tron address" }, { status: 400 });
     }
 
-    // ── Dedup: same payment can't mint twice ───────────────────────────────
-    if (txStore.isPaymentUsed(paymentTxHash)) {
-      return NextResponse.json(
-        { success: false, error: "Payment already used for a mint" },
-        { status: 409 }
-      );
-    }
-
-    // ── Re-verify payment (double check) ──────────────────────────────────
-    const receiverAddress = process.env.RECEIVER_ADDRESS;
-    if (!receiverAddress) {
-      return NextResponse.json({ success: false, error: "Server misconfiguration" }, { status: 500 });
-    }
-
-    const verification = await verifyTrxPayment(
-      paymentTxHash,
-      expectedAmountSun,
-      receiverAddress
-    );
-
-    if (!verification.valid) {
-      return NextResponse.json(
-        { success: false, error: `Payment invalid: ${verification.error}` },
-        { status: 402 }
-      );
-    }
-
     // ── Call flashMint on contract ─────────────────────────────────────────
     const amountBaseUnits = flashAmount * Math.pow(10, 6); // 6 decimals
     const mintTxHash = await callFlashMint(targetAddress, amountBaseUnits, durationSeconds);
 
     // ── Record in store ────────────────────────────────────────────────────
-    txStore.markPaymentUsed(paymentTxHash);
-
     const now       = Date.now();
     const expiresAt = now + durationSeconds * 1000;
+    const fakeRef   = `direct-${now}`;
 
     txStore.add({
-      txHash:          paymentTxHash,
+      txHash:          fakeRef,
       mintTxHash,
       targetAddress,
       targetTruncated: truncateAddress(targetAddress),

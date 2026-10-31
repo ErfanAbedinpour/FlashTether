@@ -24,8 +24,8 @@ export function FlashStatus({ gen }: Props) {
   }, [gen.stage, gen.mintResult]);
 
   // ── Loading states ────────────────────────────────────────────────────
-  if (gen.stage === "verifying" || gen.stage === "minting") {
-    const label = gen.stage === "verifying" ? "Verifying payment…" : "Minting flash tokens…";
+  if (gen.stage === "minting") {
+    const label = "Minting flash tokens…";
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}

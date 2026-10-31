@@ -1,11 +1,11 @@
 "use client";
 
-import { cn, isValidTronAddress, usdToTrx, trxToSun, formatAmount } from "@/lib/utils";
-import { AmountSelector } from "./AmountSelector";
+import { cn, isValidTronAddress, usdToTrx, formatAmount } from "@/lib/utils";
+import { AmountSelector }   from "./AmountSelector";
 import { DurationSelector } from "./DurationSelector";
-import { useTrxPrice } from "@/hooks/useTrxPrice";
+import { useTrxPrice }      from "@/hooks/useTrxPrice";
 import type { FlashGeneratorState } from "@/hooks/useFlashGenerator";
-import { Zap, AlertCircle } from "lucide-react";
+import { Zap, AlertCircle, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface Props { gen: FlashGeneratorState; }
@@ -13,10 +13,10 @@ interface Props { gen: FlashGeneratorState; }
 export function FlashGenerator({ gen }: Props) {
   const { usdPerTrx, loading: priceLoading } = useTrxPrice();
 
-  const addressValid  = isValidTronAddress(gen.targetAddress);
-  const priceUSD      = gen.selectedTier.priceUSD;
-  const priceTRX      = usdPerTrx > 0 ? usdToTrx(priceUSD, usdPerTrx) : 0;
-  const canProceed    = addressValid && gen.targetAddress.length > 0;
+  const addressValid = isValidTronAddress(gen.targetAddress);
+  const priceUSD     = gen.selectedTier.priceUSD;
+  const priceTRX     = usdPerTrx > 0 ? usdToTrx(priceUSD, usdPerTrx) : 0;
+  const canMint      = addressValid && gen.targetAddress.length > 0 && gen.stage !== "minting";
 
   return (
     <motion.div
@@ -55,7 +55,7 @@ export function FlashGenerator({ gen }: Props) {
         <div className="relative">
           <input
             type="text"
-            placeholder="T... (42 chars Tron address)"
+            placeholder="T... (34 chars Tron address)"
             value={gen.targetAddress}
             onChange={e => gen.setTargetAddress(e.target.value.trim())}
             className={cn(
@@ -78,7 +78,7 @@ export function FlashGenerator({ gen }: Props) {
         </div>
       </div>
 
-      {/* Summary row */}
+      {/* Summary */}
       <div className="glass-alt rounded-xl p-4 space-y-2 text-sm">
         <Row label="Flash Amount" value={`${formatAmount(gen.selectedTier.amount)} TETHER`} />
         <Row label="Network"      value="Tron Nile Testnet" accent />
@@ -86,30 +86,33 @@ export function FlashGenerator({ gen }: Props) {
         <Row label="Duration"     value={gen.selectedDuration.label} />
         <div className="border-t border-[var(--border)] pt-2 mt-2">
           <Row
-            label="Total Price"
+            label="Price"
             value={priceLoading ? "…" : `$${priceUSD} · ~${priceTRX.toFixed(1)} TRX`}
             bold
           />
         </div>
       </div>
 
-      {/* CTA */}
+      {/* CTA — calls mint() directly, no modal */}
       <button
-        onClick={gen.openPayment}
-        disabled={!canProceed}
+        onClick={gen.mint}
+        disabled={!canMint}
         className={cn(
           "w-full py-4 rounded-xl font-semibold text-base transition-all",
           "flex items-center justify-center gap-2",
-          canProceed
+          canMint
             ? "bg-[var(--accent)] text-black hover:opacity-90 glow-accent"
             : "bg-[var(--bg-card2)] text-[var(--text-muted)] cursor-not-allowed border border-[var(--border)]"
         )}
       >
-        <Zap className="w-5 h-5" />
-        Buy Flash TETHER
+        {gen.stage === "minting" ? (
+          <><Loader2 className="w-5 h-5 spin" /> Generating…</>
+        ) : (
+          <><Zap className="w-5 h-5" /> Generate Flash TETHER</>
+        )}
       </button>
 
-      {!canProceed && (
+      {!canMint && gen.stage !== "minting" && (
         <p className="text-center text-xs text-[var(--text-muted)]">
           Enter a valid Tron address to continue
         </p>
@@ -118,9 +121,7 @@ export function FlashGenerator({ gen }: Props) {
   );
 }
 
-function Row({
-  label, value, accent, bold,
-}: {
+function Row({ label, value, accent, bold }: {
   label: string; value: string; accent?: boolean; bold?: boolean;
 }) {
   return (

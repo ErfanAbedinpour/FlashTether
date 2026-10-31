@@ -24,29 +24,35 @@ export interface DurationOption {
 }
 
 export const DURATION_OPTIONS: DurationOption[] = [
-  { id: "1h",  label: "1 Hour",  seconds: 3_600 },
-  { id: "6h",  label: "6 Hours", seconds: 21_600 },
-  { id: "12h", label: "12 Hours",seconds: 43_200 },
-  { id: "24h", label: "24 Hours",seconds: 86_400 },
-  { id: "3d",  label: "3 Days",  seconds: 259_200 },
-  { id: "7d",  label: "7 Days",  seconds: 604_800 },
+  { id: "1h",   label: "1 Hour",   seconds: 3_600 },
+  { id: "6h",   label: "6 Hours",  seconds: 21_600 },
+  { id: "12h",  label: "12 Hours", seconds: 43_200 },
+  { id: "24h",  label: "24 Hours", seconds: 86_400 },
+  { id: "3d",   label: "3 Days",   seconds: 259_200 },
+  { id: "7d",   label: "7 Days",   seconds: 604_800 },
+  { id: "14d",  label: "14 Days",  seconds: 1_209_600 },
+  { id: "30d",  label: "30 Days",  seconds: 2_592_000 },
+  { id: "60d",  label: "60 Days",  seconds: 5_184_000 },
+  { id: "90d",  label: "90 Days",  seconds: 7_776_000 },
+  { id: "180d", label: "180 Days", seconds: 15_552_000 },
+  { id: "365d", label: "1 Year",   seconds: 31_536_000 },
 ];
 
 // ─── Network config ───────────────────────────────────────────────────────
 
 export const NILE_CONFIG = {
-  fullHost:  "https://nile.trongrid.io",
-  solidityNode: "https://nile.trongrid.io",
-  eventServer:  "https://nile.trongrid.io",
-  tronscanBase: "https://nile.tronscan.org/#/transaction",
-  faucet: "https://nileex.io/join/getJoinPage",
-  chainId: "0xcd8690dc",
+  fullHost:     "https://api.trongrid.io",      // mainnet
+  solidityNode: "https://api.trongrid.io",
+  eventServer:  "https://api.trongrid.io",
+  tronscanBase: "https://tronscan.org/#/transaction",
+  faucet: "",
+  chainId: "0x2b6653dc",                        // mainnet chain id
 };
 
 // ─── Token meta ───────────────────────────────────────────────────────────
 
 export const TOKEN = {
-  name:     "TETHER Abedinpour",
+  name:     "Tether USD",
   symbol:   "TETHER",
   decimals: 6,
 };

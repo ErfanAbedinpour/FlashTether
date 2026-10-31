@@ -13,7 +13,8 @@ export function getServerTronWeb() {
   if (_tronWebInstance) return _tronWebInstance as TronWebInstance;
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const TronWeb = require("tronweb");
+  const TronWebModule = require("tronweb");
+  const TronWeb = TronWebModule.TronWeb ?? TronWebModule.default ?? TronWebModule;
 
   const privateKey = process.env.TRON_PRIVATE_KEY;
   if (!privateKey) throw new Error("TRON_PRIVATE_KEY not set in .env.local");
