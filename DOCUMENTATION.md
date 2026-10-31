@@ -1,4 +1,4 @@
-# Flash TETHER — Technical Documentation
+# FlashTether Lab — Technical Documentation
 
 **Version:** 0.1.0  
 **Status:** Academic / training project  

@@ -1,6 +1,6 @@
-# Flash TETHER
+# FlashTether Lab
 
-**Academic / training project** — a Next.js demo of a time-limited TRC20-style token on the **Tron Nile testnet**.
+**Time-gated TRC20 demo** — a university Next.js + Solidity project on the **Tron Nile testnet**.
 
 The app lets a student pick a target Tron address, a display amount, and a duration. A backend route then calls an owner-only `flashMint` function on a custom smart contract. The contract stores a balance plus an expiry timestamp. After that timestamp, `balanceOf` returns `0` with no extra transaction.
 

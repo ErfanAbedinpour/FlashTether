@@ -5,9 +5,9 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title:       "Flash TETHER | Instant Generation Protocol",
-  description: "Generate temporary TETHER tokens that appear as real balance in any TVM wallet. Tron Nile Testnet.",
-  keywords:    ["tron", "testnet", "trc20", "flash token", "nile", "TETHER"],
+  title:       "FlashTether Lab | Time-Gated TRC20 Demo",
+  description: "University training project: a Next.js + Solidity demo of a time-limited, non-transferable TRC20-style token on the Tron Nile testnet.",
+  keywords:    ["tron", "nile", "testnet", "trc20", "solidity", "nextjs", "university"],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
